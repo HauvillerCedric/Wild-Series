@@ -2,66 +2,36 @@
 
 namespace App\DataFixtures;
 
+use Faker\Factory;
 use App\Entity\Program;
+use App\DataFixtures\CategoryFixtures;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Persistence\ObjectManager;
 
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
-
-    public const PROGRAMS =[
-        [
-            'title' => 'How I Met Your Mother',
-            'synopsis' => 'Mais qui est la maman?',
-            'reference' => 'category_Comedie',
-        ],
-
-        [
-            'title' => 'The Last of US',
-            'synopsis' => 'Des monstres et des méchants',
-            'reference' => 'category_Action',
-        ],
-
-        [
-            'title' => 'Dragon Ball Z',
-            'synopsis' => 'Les boules de cristal',
-            'reference' => 'category_Animation',
-        ],
-
-        [
-            'title' => 'The Expanse',
-            'synopsis' => 'Dans les étoiles...mais sans budget',
-            'reference' => 'category_Aventure',
-        ],
-
-        [
-            'title' => 'Chambers',
-            'synopsis' => 'La frousse sous la couette',
-            'reference' => 'category_Horreur',
-        ]
-
-    ];
-
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        foreach (self::PROGRAMS as $key => $programValue) {
+        $faker = Factory::create();
+        for ($i = 0; $i < 50; $i++) {
             $program = new Program();
-            $program->setTitle($programValue['title']);
-            $program->setSynopsis($programValue['synopsis']);
-            $program->setCategory($this->getReference($programValue['reference']));
+            $program->setTitle($faker->sentence());
+            $program->setSynopsis($faker->paragraphs(3, true));
+            $program->setCountry($faker->country());
+            $program->setYear($faker->year());
+            $randomCategoryKey = array_rand(CategoryFixtures::CATEGORIES);
+            $categoryName = CategoryFixtures::CATEGORIES[$randomCategoryKey];
+            $program->setCategory($this->getReference('categorie_' . $categoryName));
+            $this->addReference('program_' . $i, $program);
             $manager->persist($program);
         }
-       
         $manager->flush();
     }
-
-
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        // Tu retournes ici toutes les classes de fixtures dont ProgramFixtures dépend
         return [
-          CategoryFixtures::class,
+            CategoryFixtures::class,
         ];
     }
 }
