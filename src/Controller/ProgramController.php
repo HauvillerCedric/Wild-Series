@@ -11,16 +11,24 @@ use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
 {
     #[Route('/', name: 'index')]
-    public function index(ProgramRepository $programRepository): Response
-    {
+    public function index( RequestStack $requestStack, ProgramRepository $programRepository): Response
+    {   
+        $session = $requestStack->getSession();
+        if (!$session->has('total')) {
+            $session->set('total', 0); // if total doesn’t exist in session, it is initialized.
+        }
+    
+        $total = $session->get('total'); // get actual value in session with ‘total' key.
         $programs = $programRepository->findAll();
 
         return $this->render('program/index.html.twig', [
@@ -44,6 +52,9 @@ class ProgramController extends AbstractController
             // For example : persiste & flush the entity
             // And redirect to a route that display the result
             $programRepository->save($program, true);
+
+             // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
+       $this->addFlash('success', 'La série a été ajoutée!');
     
             // Redirect to categories list
             return $this->redirectToRoute('program_index');
@@ -51,6 +62,7 @@ class ProgramController extends AbstractController
     
         // Render the form
         return $this->render('program/new.html.twig', [
+            'program' =>$program,
             'form' => $form,
         ]);
     }
