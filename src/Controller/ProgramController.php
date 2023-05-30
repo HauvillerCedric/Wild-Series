@@ -9,12 +9,16 @@ use App\Form\ProgramType;
 use App\Repository\SeasonRepository;
 use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 
 #[Route('/program', name: 'program_')]
@@ -37,8 +41,8 @@ class ProgramController extends AbstractController
     }
 
 
-    #[Route('/new', name: 'new')]
-    public function new(Request $request, ProgramRepository $programRepository) : Response
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    public function new(Request $request,ProgramRepository $programRepository, SluggerInterface $slugger) : Response
     {
         // Create a new Category Object
         $program = new Program();
@@ -48,6 +52,10 @@ class ProgramController extends AbstractController
         $form->handleRequest($request);
         // Was the form submitted ?
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $slug = $slugger->slug($program->getTitle());
+            $program->setSlug($slug);
+            
             // Deal with the submitted data
             // For example : persiste & flush the entity
             // And redirect to a route that display the result
@@ -62,27 +70,30 @@ class ProgramController extends AbstractController
     
         // Render the form
         return $this->render('program/new.html.twig', [
-            'program' =>$program,
             'form' => $form,
         ]);
     }
 
 
-    #[Route('/{id<^[0-9]+$>}', name: 'show')]
+    #[Route('/{slug}',  methods: ['GET'], name: 'show')]
     public function show(Program $program): Response
     {
+    
         if (!$program) {
             throw $this->createNotFoundException(
                 'No program with id : '.$id.' found in program\'s table.'
             );
         }
         return $this->render('program/show.html.twig', [
-            'program' => $program,
+            'program' => $program,   
         ]);
     }
+    
+    
+
 
     
-    #[Route('/{program<^[0-9]+$>}/season/{season<^[0-9]+$>}', name: 'season_show')]
+    #[Route('/{slug}/season/{season}', name: 'season_show')]
 public function showSeason(Program $program, Season $season, EpisodeRepository $episodeRepository): Response
 {
     $episodes = $episodeRepository->findBy(['season' => $season]);
@@ -91,10 +102,11 @@ public function showSeason(Program $program, Season $season, EpisodeRepository $
         'program' => $program,
         'season' => $season,
         'episodes' => $episodes,
-    ]);
+    ]); 
 }
 
-#[Route('/{program<^[0-9]+$>}/season/{season<^[0-9]+$>}/episode/{episode<^[0-9]+$>}', name: 'episode_show')]
+#[Route('/{slug}/season/{season}/episode/{episode}', name: 'episode_show')]
+#[ParamConverter('episode', options: ['mapping' => ['episode' => 'slug']])]
 public function showEpisode(Program $program, Season $season, Episode $episode): Response
 {
     return $this->render('program/episode_show.html.twig', [
@@ -103,6 +115,5 @@ public function showEpisode(Program $program, Season $season, Episode $episode):
         'season' => $season,
     ]);
 }
-
 
 }

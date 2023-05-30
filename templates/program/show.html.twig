@@ -14,7 +14,7 @@
             <p>Saison {{ season.number }}</p>
             <p>Année {{ season.year }}</p>
             <p>Description {{ season.description }}</p>
-            <a href="{{ path('program_season_show', { "program": program.id, "season": season.id }) }}">Lien vers la saison</a>
+           <a href="{{ path('program_season_show', { slug: program.slug, "season": season.id }) }}">Lien vers la saison</a>
             {% endfor %}
 
         <h2> Liste des acteurs de la série </h2>

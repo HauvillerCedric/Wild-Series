@@ -32,6 +32,8 @@ class Season
     #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class)]
     private Collection $episodes;
 
+ 
+
     public function __construct()
     {
         $this->episodes = new ArrayCollection();
@@ -119,4 +121,5 @@ class Season
 
         return $this;
     }
+
 }

@@ -2,17 +2,19 @@
 
 namespace App\DataFixtures;
 
+use Faker\Factory;
 use App\Entity\Season;
+use App\DataFixtures\SeasonFixtures;
 use App\DataFixtures\ProgramFixtures;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 //Tout d'abord nous ajoutons la classe Factory de FakerPhp
-use Faker\Factory;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class SeasonFixtures extends Fixture implements DependentFixtureInterface
 {
+   
     public function load(ObjectManager $manager): void
     {
         //Puis ici nous demandons à la Factory de nous fournir un Faker
