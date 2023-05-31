@@ -211,4 +211,15 @@ class Program
 
         return $this;
     }
+
+    public function getDuration():int
+    {
+        $totalDuration = 0;
+        foreach ($this->seasons as $season){
+            foreach ($season->getEpisodes() as $episode) {
+                $totalDuration += $episode->getDuration();
+            }
+        }
+        return $totalDuration;
+    }
 }

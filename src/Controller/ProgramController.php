@@ -6,6 +6,7 @@ use App\Entity\Season;
 use App\Entity\Episode;
 use App\Entity\Program;
 use App\Form\ProgramType;
+use App\Service\ProgramDuration;
 use App\Repository\SeasonRepository;
 use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
@@ -76,7 +77,7 @@ class ProgramController extends AbstractController
 
 
     #[Route('/{slug}',  methods: ['GET'], name: 'show')]
-    public function show(Program $program): Response
+    public function show(Program $program, ProgramRepository $programRepository, ProgramDuration $programDuration): Response
     {
     
         if (!$program) {
@@ -84,8 +85,10 @@ class ProgramController extends AbstractController
                 'No program with id : '.$id.' found in program\'s table.'
             );
         }
+        $duration = $programDuration->calculate($program);
         return $this->render('program/show.html.twig', [
-            'program' => $program,   
+            'program' => $program,  
+            'duration' => $duration, 
         ]);
     }
     
