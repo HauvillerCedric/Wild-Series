@@ -12,6 +12,8 @@ use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -43,7 +45,7 @@ class ProgramController extends AbstractController
 
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request,ProgramRepository $programRepository, SluggerInterface $slugger) : Response
+    public function new(Request $request,ProgramRepository $programRepository, SluggerInterface $slugger, MailerInterface $mailer) : Response
     {
         // Create a new Category Object
         $program = new Program();
@@ -61,6 +63,14 @@ class ProgramController extends AbstractController
             // For example : persiste & flush the entity
             // And redirect to a route that display the result
             $programRepository->save($program, true);
+
+            $email = (new Email())
+            ->from($this->getParameter('mailer_from'))
+            ->to('your_email@example.com')
+            ->subject('Une nouvelle série vient d\'être publiée !')
+            ->html('<p>Une nouvelle série vient d\'être publiée sur Wild Séries !</p>');
+
+    $mailer->send($email);
 
              // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
        $this->addFlash('success', 'La série a été ajoutée!');

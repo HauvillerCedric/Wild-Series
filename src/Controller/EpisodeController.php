@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 #[Route('/episode')]
 class EpisodeController extends AbstractController
@@ -23,16 +25,23 @@ class EpisodeController extends AbstractController
     }
 
     #[Route('/new', name: 'app_episode_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EpisodeRepository $episodeRepository, SluggerInterface $slugger): Response
+    public function new(Request $request, EpisodeRepository $episodeRepository, SluggerInterface $slugger, MailerInterface $mailer): Response
     {
         $episode = new Episode();
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $episodeRepository->save($episode, true);
             $slug = $slugger->slug($episode->getTitle());
             $episode->setSlug($slug);
+            $episodeRepository->save($episode, true);
+            $email = (new Email())
+            ->from($this->getParameter('mailer_from'))
+            ->to('your_email@example.com')
+            ->subject('Une nouvelle série vient d\'être publiée !')
+            ->html($this->renderView('Episode/newEpisodeEmail.html.twig', ['episode' => $episode]));
+
+    $mailer->send($email);
     // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
     $this->addFlash('success', "L'épisode a été ajouté !");
 
