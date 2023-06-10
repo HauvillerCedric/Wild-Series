@@ -22,6 +22,8 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
+        $admin = $this->getReference('admin');
+        $contributor = $this->getReference('contributor');
         for ($i = 0; $i < 50; $i++) {
             $program = new Program();
             $program->setTitle($faker->sentence());
@@ -33,6 +35,8 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
             $categoryName = CategoryFixtures::CATEGORIES[$randomCategoryKey];
             $program->setCategory($this->getReference('categorie_' . $categoryName));
             $this->addReference('program_' . $i, $program);
+            $user = $i % 2 === 0 ? $contributor : $admin;
+            $program->setOwner($user);
 
            
             

@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 #[Route('/category', name: 'category_')]
 class CategoryController extends AbstractController
@@ -29,6 +30,7 @@ class CategoryController extends AbstractController
  * Display the form or deal with it
  */
 #[Route('/new', name: 'new')]
+#[IsGranted("ROLE_ADMIN")]
 public function new(Request $request, CategoryRepository $categoryRepository) : Response
 {
     // Create a new Category Object
