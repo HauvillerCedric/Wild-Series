@@ -2,16 +2,19 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Episode;
+use App\Form\CommentType;
 use App\Form\EpisodeType;
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\Mime\Email;
 use App\Repository\EpisodeRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/episode')]
 class EpisodeController extends AbstractController

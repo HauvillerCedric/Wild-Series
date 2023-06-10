@@ -29,8 +29,15 @@
     <li class="nav-item">
       <a class="nav-link" href="#">Inscription</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">Connexion</a>
-    </li>
+   {% if app.user %}
+    {{ app.user.email }}
+    <form action="{{ path('app_logout') }}" method="post">
+        <button type="submit" class="nav-link" style="background-color: transparent; border: none;">Se déconnecter</button>
+    </form>
+{% else %}
+<ul>
+    <a href="{{ path('app_login') }}">Se connecter</a>
+    </ul>
+{% endif %}
   </ul>
 </nav>
