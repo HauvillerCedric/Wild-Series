@@ -17,6 +17,8 @@
     <header>
 			{% include "_navbar.html.twig" %}
     </header>
+    <body {{ stimulus_controller('theme') }} 
+{{ stimulus_target('theme', 'body') }}>...</body>
 		{% for category, messages in app.flashes %}
     {% for message in messages %}
         <div class="alert alert-{{ category }}">
