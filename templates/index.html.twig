@@ -3,5 +3,18 @@
 {% block title %}Wild Series{% endblock %}
 
 {% block body %}
-<h1>{{ website }}</h1>
+<h1> <div class="p-5" style="font-size: 1.3em;">
+        <span
+            {{ stimulus_controller('symfony/ux-typed', {
+                strings: [
+                    'Bienvenue sur Wild Series',
+                    'Le pire site du monde',
+                    'C\'est moche et rien ne fonctionne',
+                ],
+                loop: true,
+                showCursor: true,
+                cursorChar: '✨',
+            }) }}
+        ></span>
+    </div></h1>
 {% endblock %}

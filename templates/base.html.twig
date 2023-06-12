@@ -13,12 +13,12 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
-    <body>
+    
     <header>
 			{% include "_navbar.html.twig" %}
     </header>
-    <body {{ stimulus_controller('theme') }} 
-{{ stimulus_target('theme', 'body') }}>...</body>
+     <body {{ stimulus_controller('symfony/ux-swup/swup') }}>
+        <div id="swup">
 		{% for category, messages in app.flashes %}
     {% for message in messages %}
         <div class="alert alert-{{ category }}">
@@ -28,5 +28,6 @@
 {% endfor %}
 
         {% block body %}{% endblock %}
+        </div>
     </body>
 </html>
