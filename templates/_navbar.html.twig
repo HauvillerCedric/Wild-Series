@@ -17,18 +17,7 @@
        <li class="nav-item">
         <a class="nav-link" href="{{ path('app_episode_index') }}">Episodes</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ path('category_index') }}">Catégories</a>
-      </li>
-      <div {{ stimulus_controller('my-controller')}}>
-    <!-- some content -->
-    <div {{ stimulus_target('my-controller', 'anyNameOfTarget') }}>
-        <!-- some content -->
-    </div>
-    <button {{ stimulus_action('my-controller', 'anyNameOfMethod')}}>
-        clic me
-    </button>
-</div>
+       {{ component('navbar') }}
       <li class="nav-item">
         <a class="nav-link" href="#">Mes favoris</a>
       </li>
