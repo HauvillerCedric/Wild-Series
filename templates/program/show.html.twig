@@ -30,6 +30,12 @@
         </div>
     </div>
 
+{% if app.user %}
+        <!-- Code pour afficher l'icône de la watchlist -->
+        <a href="{{ path('program_watchlist', {id: program.id})}}">
+            <i class="bi {{ app.user.isInWatchlist(program) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+        </a>
+    {% endif %}
 
     <a href="{{ path('program_index') }}">
         Retour à la liste des programmes

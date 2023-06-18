@@ -77,10 +77,14 @@ class Program
     #[ORM\ManyToOne(inversedBy: 'programs')]
     private ?User $owner = null;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'watchlist')]
+    private Collection $viewers;
+
     public function __construct()
     {
         $this->seasons = new ArrayCollection();
         $this->actors = new ArrayCollection();
+        $this->viewers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -282,6 +286,33 @@ class Program
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addWatchlist($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeWatchlist($this);
+        }
 
         return $this;
     }

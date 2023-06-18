@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use App\Repository\UserRepository;
 
 
 #[Route('/program', name: 'program_')]
@@ -176,6 +177,28 @@ public function showEpisode(Program $program, Season $season, Episode $episode):
         'program' => $program,
         'season' => $season,
     ]);
+}
+
+#[Route('/{id}/watchlist', methods: ['GET', 'POST'], name: 'watchlist')]
+public function addToWatchlist(Program $program, UserRepository $userRepository): Response
+{
+    if (!$program) {
+        throw $this->createNotFoundException(
+            'No program with this id found in program\'s table.'
+        );
+    }      
+
+    /** @var \App\Entity\User */
+    $user = $this->getUser();       
+    if ($user->isInWatchlist($program)) {
+        $user->removeFromWatchlist($program);
+    } else {
+        $user->addToWatchlist($program);
+    }        
+
+    $userRepository->save($user, true);        
+
+    return $this->redirectToRoute('program_show', ['slug' => $program->getSlug()], Response::HTTP_SEE_OTHER);
 }
 
 }
